@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Form Builder - ODK MCP System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/form-builder.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-cube me-2"></i>
+                    ODK Smart Form Builder
+                </a>
+                <div class="navbar-nav ms-auto">
+                    <button class="btn btn-outline-light me-2" onclick="saveForm()">
+                        <i class="fas fa-save me-1"></i>Save
+                    </button>
+                    <button class="btn btn-outline-light me-2" onclick="previewForm()">
+                        <i class="fas fa-eye me-1"></i>Preview
+                    </button>
+                    <button class="btn btn-success" onclick="exportForm()">
+                        <i class="fas fa-download me-1"></i>Export
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="container-fluid h-100">
+            <div class="row h-100">
+                <!-- Component Palette -->
+                <div class="col-md-3 bg-light border-end component-palette">
+                    <div class="p-3">
+                        <h5 class="mb-3">
+                            <i class="fas fa-puzzle-piece me-2"></i>
+                            Form Components
+                        </h5>
+                        
+                        <!-- Search Components -->
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Search components..." id="componentSearch">
+                        </div>
+
+                        <!-- AI Suggestions Panel -->
+                        <div class="card mb-3" id="aiSuggestionsPanel" style="display: none;">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-robot me-2"></i>
+                                    AI Suggestions
+                                </h6>
+                            </div>
+                            <div class="card-body" id="aiSuggestionsContent">
+                                <!-- AI suggestions will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Component Categories -->
+                        <div class="accordion" id="componentAccordion">
+                            <!-- Basic Components -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#basicComponents">
+                                        <i class="fas fa-font me-2"></i>Basic Fields
+                                    </button>
+                                </h2>
+                                <div id="basicComponents" class="accordion-collapse collapse show">
+                                    <div class="accordion-body">
+                                        <div id="basicComponentsList" class="component-list">
+                                            <!-- Basic components will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Advanced Components -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#advancedComponents">
+                                        <i class="fas fa-cogs me-2"></i>Advanced Fields
+                                    </button>
+                                </h2>
+                                <div id="advancedComponents" class="accordion-collapse collapse">
+                                    <div class="accordion-body">
+                                        <div id="advancedComponentsList" class="component-list">
+                                            <!-- Advanced components will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Layout Components -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#layoutComponents">
+                                        <i class="fas fa-layer-group me-2"></i>Layout & Logic
+                                    </button>
+                                </h2>
+                                <div id="layoutComponents" class="accordion-collapse collapse">
+                                    <div class="accordion-body">
+                                        <div id="layoutComponentsList" class="component-list">
+                                            <!-- Layout components will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Templates Section -->
+                        <div class="mt-4">
+                            <h6 class="mb-3">
+                                <i class="fas fa-file-alt me-2"></i>
+                                Quick Start Templates
+                            </h6>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary btn-sm" onclick="loadTemplate('survey_template')">
+                                    <i class="fas fa-poll me-1"></i>Survey
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="loadTemplate('registration_template')">
+                                    <i class="fas fa-user-plus me-1"></i>Registration
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="loadTemplate('assessment_template')">
+                                    <i class="fas fa-clipboard-check me-1"></i>Assessment
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- CSV Import -->
+                        <div class="mt-4">
+                            <h6 class="mb-3">
+                                <i class="fas fa-file-csv me-2"></i>
+                                Import from CSV
+                            </h6>
+                            <input type="file" class="form-control" id="csvFileInput" accept=".csv,.xlsx,.xls" onchange="analyzeCsv()">
+                            <small class="text-muted">Upload a CSV file to auto-generate form structure</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Builder Canvas -->
+                <div class="col-md-6 form-builder-canvas">
+                    <div class="p-3">
+                        <!-- Form Header -->
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control form-control-lg" id="formTitle" placeholder="Form Title" value="Untitled Form">
+                                        <textarea class="form-control mt-2" id="formDescription" placeholder="Form Description" rows="2"></textarea>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="btn btn-info btn-sm w-100 mb-2" onclick="getAiSuggestions()">
+                                            <i class="fas fa-magic me-1"></i>Get AI Suggestions
+                                        </button>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="autoSave" checked>
+                                            <label class="form-check-label" for="autoSave">
+                                                Auto-save
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Fields Container -->
+                        <div id="formFieldsContainer" class="form-fields-container">
+                            <div class="empty-state text-center py-5" id="emptyState">
+                                <i class="fas fa-plus-circle fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">Start Building Your Form</h5>
+                                <p class="text-muted">Drag components from the left panel or use AI suggestions to get started</p>
+                            </div>
+                        </div>
+
+                        <!-- Add Field Button -->
+                        <div class="text-center mt-3">
+                            <button class="btn btn-outline-primary" onclick="showAddFieldModal()">
+                                <i class="fas fa-plus me-1"></i>Add Field
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Properties Panel -->
+                <div class="col-md-3 bg-light border-start properties-panel">
+                    <div class="p-3">
+                        <h5 class="mb-3">
+                            <i class="fas fa-sliders-h me-2"></i>
+                            Properties
+                        </h5>
+                        
+                        <div id="propertiesContent">
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-mouse-pointer fa-2x mb-2"></i>
+                                <p>Select a field to edit its properties</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    
+    <!-- Add Field Modal -->
+    <div class="modal fade" id="addFieldModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Field</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Field Type</label>
+                            <select class="form-select" id="newFieldType">
+                                <option value="text">Text Input</option>
+                                <option value="number">Number Input</option>
+                                <option value="date">Date Picker</option>
+                                <option value="select_one">Dropdown</option>
+                                <option value="select_multiple">Multi-Select</option>
+                                <option value="radio">Radio Buttons</option>
+                                <option value="checkbox">Checkboxes</option>
+                                <option value="geopoint">GPS Location</option>
+                                <option value="image">Image Capture</option>
+                                <option value="audio">Audio Recording</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Field Name</label>
+                            <input type="text" class="form-control" id="newFieldName" placeholder="field_name">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Field Label</label>
+                            <input type="text" class="form-control" id="newFieldLabel" placeholder="Field Label">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Hint Text (Optional)</label>
+                            <input type="text" class="form-control" id="newFieldHint" placeholder="Help text for users">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="newFieldRequired">
+                                <label class="form-check-label" for="newFieldRequired">
+                                    Required Field
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addNewField()">Add Field</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal fade" id="previewModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Form Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="previewContent">
+                        <!-- Preview content will be loaded here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="exportForm()">Export Form</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal fade" id="exportModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Export Form</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Export Format</label>
+                        <select class="form-select" id="exportFormat">
+                            <option value="xlsform">XLSForm (Excel)</option>
+                            <option value="json">JSON Schema</option>
+                            <option value="xml">ODK XML</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">File Name</label>
+                        <input type="text" class="form-control" id="exportFileName" value="my_form">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="downloadForm()">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="{{ url_for('static', filename='js/form-builder.js') }}"></script>
+</body>
+</html>
+
