@@ -1,0 +1,58 @@
+{
+  "backend_services": {
+    "Form Management": {
+      "status": true,
+      "error": null,
+      "health_check": true,
+      "note": "Service code is valid"
+    },
+    "Data Collection": {
+      "status": true,
+      "error": null,
+      "health_check": true,
+      "note": "Service code is valid"
+    },
+    "Data Aggregation": {
+      "status": true,
+      "error": null,
+      "health_check": true,
+      "note": "Service code is valid"
+    }
+  },
+  "frontend_components": {
+    "React Native App": {
+      "status": true,
+      "note": "Directory exists"
+    },
+    "Streamlit App": {
+      "status": true,
+      "note": "App file found"
+    }
+  },
+  "ai_modules": {
+    "detector": {
+      "status": true,
+      "error": null
+    },
+    "analyzer": {
+      "status": true,
+      "error": null
+    },
+    "recommender": {
+      "status": true,
+      "error": null
+    },
+    "generator": {
+      "status": true,
+      "error": null
+    },
+    "assistant": {
+      "status": true,
+      "error": null
+    }
+  },
+  "integrations": {},
+  "issues_found": [],
+  "fixes_applied": [],
+  "missing_features": []
+}
