@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            position: relative;
+        }
+        .market-card {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            border-left: 6px solid #059669;
+        }
+        .growth-indicator {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container p-16">
+        <!-- Header -->
+        <div class="mb-12">
+            <h1 class="text-5xl font-bold text-gray-800 mb-4">Market Opportunity</h1>
+            <h2 class="text-2xl text-green-600 font-medium">$443 Billion Social Impact Sector</h2>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="grid grid-cols-3 gap-8 h-96">
+            <!-- Left Column: Market Size -->
+            <div class="col-span-2">
+                <div class="bg-white rounded-2xl p-8 shadow-lg h-full">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Global NGO & Charitable Organizations Market</h3>
+                    
+                    <!-- Market Growth Chart -->
+                    <div style="height: 280px;">
+                        <canvas id="marketGrowthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Key Metrics -->
+            <div class="space-y-6">
+                <div class="market-card p-6 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-globe text-green-600 text-2xl mr-4"></i>
+                        <h3 class="text-lg font-bold text-green-800">Global Reach</h3>
+                    </div>
+                    <div class="text-3xl font-bold text-green-700 mb-2">10M+</div>
+                    <p class="text-green-600 text-sm">NGOs Worldwide</p>
+                </div>
+                
+                <div class="market-card p-6 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-chart-line text-green-600 text-2xl mr-4"></i>
+                        <h3 class="text-lg font-bold text-green-800">Growth Rate</h3>
+                    </div>
+                    <div class="text-3xl font-bold text-green-700 mb-2">8.2%</div>
+                    <p class="text-green-600 text-sm">Annual CAGR</p>
+                </div>
+                
+                <div class="market-card p-6 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-users text-green-600 text-2xl mr-4"></i>
+                        <h3 class="text-lg font-bold text-green-800">Employment</h3>
+                    </div>
+                    <div class="text-3xl font-bold text-green-700 mb-2">54M</div>
+                    <p class="text-green-600 text-sm">People Employed</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Insights -->
+        <div class="mt-8 grid grid-cols-3 gap-6">
+            <div class="growth-indicator p-6 rounded-xl text-center">
+                <i class="fas fa-rocket text-3xl mb-4"></i>
+                <h4 class="text-lg font-bold mb-2">Technology Adoption</h4>
+                <p class="text-sm opacity-90">65% of NGOs actively seeking digital transformation solutions</p>
+            </div>
+            
+            <div class="growth-indicator p-6 rounded-xl text-center">
+                <i class="fas fa-chart-bar text-3xl mb-4"></i>
+                <h4 class="text-lg font-bold mb-2">Data-Driven Impact</h4>
+                <p class="text-sm opacity-90">Organizations using data analytics see 23% better outcomes</p>
+            </div>
+            
+            <div class="growth-indicator p-6 rounded-xl text-center">
+                <i class="fas fa-handshake text-3xl mb-4"></i>
+                <h4 class="text-lg font-bold mb-2">CSR Investment</h4>
+                <p class="text-sm opacity-90">Corporate CSR spending growing 15% annually</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Market Growth Chart
+        const ctx = document.getElementById('marketGrowthChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029'],
+                datasets: [{
+                    label: 'Market Size ($ Billions)',
+                    data: [331, 358, 387, 419, 453, 490, 530, 574, 621, 672],
+                    borderColor: '#059669',
+                    backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 300,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value + 'B';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+

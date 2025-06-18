@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            position: relative;
+        }
+        .solution-card {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-left: 6px solid #2563eb;
+        }
+        .feature-highlight {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container p-16">
+        <!-- Header -->
+        <div class="mb-12">
+            <h1 class="text-5xl font-bold text-gray-800 mb-4">Our Solution</h1>
+            <h2 class="text-2xl text-blue-600 font-medium">AI-Powered Data Collection Platform</h2>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="grid grid-cols-2 gap-12 h-96">
+            <!-- Left Column: Core Platform -->
+            <div>
+                <div class="bg-white rounded-2xl p-8 shadow-lg h-full">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Platform Architecture</h3>
+                    
+                    <!-- Platform Diagram -->
+                    <div class="space-y-4">
+                        <div class="feature-highlight p-4 rounded-lg flex items-center">
+                            <i class="fas fa-mobile-alt text-2xl mr-4"></i>
+                            <div>
+                                <h4 class="font-bold">Mobile Data Collection</h4>
+                                <p class="text-sm opacity-90">Offline-first React Native app</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-highlight p-4 rounded-lg flex items-center">
+                            <i class="fas fa-brain text-2xl mr-4"></i>
+                            <div>
+                                <h4 class="font-bold">AI Analytics Engine</h4>
+                                <p class="text-sm opacity-90">Real-time insights & anomaly detection</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-highlight p-4 rounded-lg flex items-center">
+                            <i class="fas fa-shield-alt text-2xl mr-4"></i>
+                            <div>
+                                <h4 class="font-bold">Enterprise Security</h4>
+                                <p class="text-sm opacity-90">Multi-tenant PostgreSQL with encryption</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-highlight p-4 rounded-lg flex items-center">
+                            <i class="fas fa-chart-line text-2xl mr-4"></i>
+                            <div>
+                                <h4 class="font-bold">Cross-Project Analytics</h4>
+                                <p class="text-sm opacity-90">Compare impact across initiatives</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Key Benefits -->
+            <div class="space-y-6">
+                <div class="solution-card p-6 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-wifi-slash text-blue-600 text-2xl mr-4"></i>
+                        <h3 class="text-xl font-bold text-blue-800">100% Offline Capability</h3>
+                    </div>
+                    <p class="text-blue-700 leading-relaxed">
+                        Collect data anywhere, sync automatically when connected. No internet required for field work.
+                    </p>
+                </div>
+                
+                <div class="solution-card p-6 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-robot text-blue-600 text-2xl mr-4"></i>
+                        <h3 class="text-xl font-bold text-blue-800">AI-Powered Insights</h3>
+                    </div>
+                    <p class="text-blue-700 leading-relaxed">
+                        Automatic anomaly detection, predictive analytics, and intelligent recommendations for better outcomes.
+                    </p>
+                </div>
+                
+                <div class="solution-card p-6 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-users text-blue-600 text-2xl mr-4"></i>
+                        <h3 class="text-xl font-bold text-blue-800">Multi-Organization Support</h3>
+                    </div>
+                    <p class="text-blue-700 leading-relaxed">
+                        Secure data isolation, role-based access, and collaborative analytics across organizations.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Value Proposition -->
+        <div class="mt-8 bg-gradient-to-r from-blue-600 to-green-600 text-white p-6 rounded-xl">
+            <div class="grid grid-cols-4 gap-6 text-center">
+                <div>
+                    <div class="text-3xl font-bold mb-2">85%</div>
+                    <div class="text-sm text-blue-200">Time Savings</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold mb-2">95%</div>
+                    <div class="text-sm text-blue-200">Data Accuracy</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold mb-2">60%</div>
+                    <div class="text-sm text-blue-200">Cost Reduction</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold mb-2">3x</div>
+                    <div class="text-sm text-blue-200">Faster Insights</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

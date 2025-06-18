@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #059669 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .title-text {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(45deg, #ffffff, #e0f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle-text {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #e0f2fe;
+        }
+        .geometric-shape {
+            position: absolute;
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container flex items-center justify-center relative">
+        <!-- Geometric Background Elements -->
+        <div class="geometric-shape w-96 h-96 bg-white rounded-full" style="top: -100px; right: -100px;"></div>
+        <div class="geometric-shape w-64 h-64 bg-green-300 rounded-full" style="bottom: -50px; left: -50px;"></div>
+        <div class="geometric-shape w-32 h-32 bg-blue-300" style="top: 100px; left: 100px; transform: rotate(45deg);"></div>
+        
+        <!-- Main Content -->
+        <div class="text-center z-10 px-16">
+            <!-- Logo/Icon -->
+            <div class="mb-8">
+                <div class="inline-flex items-center justify-center w-24 h-24 bg-white bg-opacity-20 rounded-full mb-6">
+                    <i class="fas fa-chart-network text-4xl text-white"></i>
+                </div>
+            </div>
+            
+            <!-- Main Title -->
+            <h1 class="title-text text-6xl font-bold mb-6 leading-tight">
+                Enhanced ODK MCP System
+            </h1>
+            
+            <!-- Subtitle -->
+            <h2 class="subtitle-text text-2xl font-light mb-8 leading-relaxed">
+                Investment Opportunity for Social Impact
+            </h2>
+            
+            <!-- Value Proposition -->
+            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-white border-opacity-20">
+                <p class="text-white text-xl font-medium leading-relaxed">
+                    Revolutionizing Data Collection for NGOs, Think Tanks, and CSR Organizations
+                    <br>
+                    <span class="text-green-200">AI-Powered • Offline-First • Enterprise-Grade Security</span>
+                </p>
+            </div>
+            
+            <!-- Key Stats -->
+            <div class="flex justify-center space-x-12">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-white mb-2">$443B</div>
+                    <div class="text-sm text-blue-200">Global NGO Market</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-white mb-2">100%</div>
+                    <div class="text-sm text-blue-200">Offline Capability</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-white mb-2">AI-First</div>
+                    <div class="text-sm text-blue-200">Analytics Platform</div>
+                </div>
+            </div>
+            
+            <!-- Call to Action -->
+            <div class="mt-12">
+                <p class="text-blue-100 text-lg">
+                    Seeking Strategic Partners & Impact Investors
+                </p>
+            </div>
+        </div>
+        
+        <!-- Decorative Elements -->
+        <div class="absolute bottom-8 left-8 flex items-center space-x-4 text-white text-opacity-60">
+            <i class="fas fa-globe text-lg"></i>
+            <span class="text-sm">Global Impact • Technology for Good</span>
+        </div>
+        
+        <div class="absolute bottom-8 right-8 text-white text-opacity-60 text-sm">
+            December 2024
+        </div>
+    </div>
+</body>
+</html>
+

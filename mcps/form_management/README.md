@@ -2,386 +2,536 @@
 
 ## Overview
 
-The Form Management MCP Service is a core component of the Enhanced ODK MCP System, responsible for form creation, validation, lifecycle management, and template handling. Built with Flask and PostgreSQL, it provides a robust foundation for dynamic form management with AI-powered features.
+The Form Management MCP Service is a core component of the Enhanced ODK MCP System, responsible for handling all aspects of form creation, validation, management, and lifecycle operations. Built on the Model Context Protocol framework, this service provides a robust, scalable solution for dynamic form management with AI-powered enhancements.
 
-## Features
+## Architecture
 
-### Core Functionality
-- **Dynamic Form Creation**: Create forms programmatically with flexible field types
-- **XLSForm Support**: Import and export forms in XLSForm format
-- **Form Validation**: Comprehensive validation rules and constraints
-- **Version Management**: Track form versions and changes
-- **Template Library**: Pre-built form templates for common use cases
+### Service Design
 
-### AI-Powered Features
-- **Smart Field Suggestions**: AI-powered field recommendations based on form context
-- **Validation Optimization**: Automatic validation rule suggestions
-- **Form Analytics**: Usage patterns and completion rate analysis
-- **Quality Scoring**: Automatic form quality assessment
+The Form Management Service follows a microservices architecture pattern with clear separation of concerns:
 
-### Advanced Capabilities
-- **Multi-language Support**: Internationalization and localization
-- **Conditional Logic**: Skip patterns and display conditions
-- **Custom Validation**: JavaScript-based custom validation rules
-- **Form Branching**: Complex form flows and routing
+- **API Layer**: RESTful endpoints for form operations
+- **Business Logic Layer**: Form validation, processing, and AI integration
+- **Data Access Layer**: PostgreSQL integration with optimized queries
+- **AI Integration Layer**: Smart form suggestions and optimization
+
+### Database Schema
+
+**Forms Table**
+```sql
+CREATE TABLE forms (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id UUID NOT NULL REFERENCES organizations(id),
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    version INTEGER DEFAULT 1,
+    status form_status DEFAULT 'draft',
+    fields JSONB NOT NULL,
+    settings JSONB DEFAULT '{}',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_by UUID REFERENCES users(id),
+    updated_by UUID REFERENCES users(id)
+);
+```
+
+**Form Templates Table**
+```sql
+CREATE TABLE form_templates (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    description TEXT,
+    template_data JSONB NOT NULL,
+    is_public BOOLEAN DEFAULT false,
+    usage_count INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
 
 ## API Endpoints
 
-### Form Management
+### Authentication
+
+All endpoints require authentication via JWT token in the Authorization header:
+```
+Authorization: Bearer <jwt_token>
+```
+
+### Form Operations
+
+#### Create Form
 ```http
-GET    /forms                    # List all forms
-POST   /forms                    # Create new form
-GET    /forms/{id}               # Get specific form
-PUT    /forms/{id}               # Update form
-DELETE /forms/{id}               # Delete form
-POST   /forms/{id}/publish       # Publish form
-POST   /forms/{id}/unpublish     # Unpublish form
+POST /api/forms
+Content-Type: application/json
+
+{
+  "title": "Community Health Survey",
+  "description": "Quarterly health assessment for rural communities",
+  "fields": [
+    {
+      "name": "respondent_age",
+      "type": "number",
+      "label": "Age of Respondent",
+      "required": true,
+      "validation": {
+        "min": 0,
+        "max": 120
+      }
+    },
+    {
+      "name": "health_status",
+      "type": "select",
+      "label": "Overall Health Status",
+      "required": true,
+      "options": [
+        {"value": "excellent", "label": "Excellent"},
+        {"value": "good", "label": "Good"},
+        {"value": "fair", "label": "Fair"},
+        {"value": "poor", "label": "Poor"}
+      ]
+    }
+  ],
+  "settings": {
+    "allow_multiple_submissions": true,
+    "require_authentication": false,
+    "enable_geolocation": true
+  }
+}
+```
+
+**Response**
+```json
+{
+  "id": "form_123",
+  "title": "Community Health Survey",
+  "status": "draft",
+  "version": 1,
+  "created_at": "2024-12-06T10:30:00Z",
+  "qr_code_url": "https://api.yourdomain.com/qr/form_123"
+}
+```
+
+#### List Forms
+```http
+GET /api/forms?page=1&limit=20&search=health&status=active
+```
+
+**Response**
+```json
+{
+  "forms": [
+    {
+      "id": "form_123",
+      "title": "Community Health Survey",
+      "description": "Quarterly health assessment",
+      "status": "active",
+      "version": 2,
+      "submission_count": 1247,
+      "created_at": "2024-12-06T10:30:00Z",
+      "updated_at": "2024-12-06T15:45:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 45,
+    "pages": 3
+  }
+}
+```
+
+#### Get Form Details
+```http
+GET /api/forms/{form_id}
+```
+
+#### Update Form
+```http
+PUT /api/forms/{form_id}
+Content-Type: application/json
+
+{
+  "title": "Updated Community Health Survey",
+  "fields": [...],
+  "settings": {...}
+}
+```
+
+#### Delete Form
+```http
+DELETE /api/forms/{form_id}
+```
+
+#### Publish Form
+```http
+POST /api/forms/{form_id}/publish
 ```
 
 ### Form Templates
+
+#### List Templates
 ```http
-GET    /templates                # List form templates
-GET    /templates/{id}           # Get specific template
-POST   /forms/from-template/{id} # Create form from template
+GET /api/templates?category=health&public=true
 ```
 
-### Form Validation
+#### Create Template from Form
 ```http
-POST   /forms/{id}/validate      # Validate form structure
-POST   /forms/validate-xlsform   # Validate XLSForm file
+POST /api/forms/{form_id}/create-template
+Content-Type: application/json
+
+{
+  "name": "Health Survey Template",
+  "category": "health",
+  "description": "Standard health assessment template",
+  "is_public": false
+}
 ```
 
-### AI Features
+### AI-Powered Features
+
+#### Get Field Suggestions
 ```http
-POST   /forms/{id}/suggestions   # Get AI field suggestions
-GET    /forms/{id}/analytics     # Get form analytics
-POST   /forms/{id}/optimize      # Get optimization recommendations
+POST /api/forms/ai/suggest-fields
+Content-Type: application/json
+
+{
+  "context": "health survey for rural communities",
+  "existing_fields": ["age", "gender"],
+  "target_audience": "rural_population"
+}
+```
+
+**Response**
+```json
+{
+  "suggestions": [
+    {
+      "name": "household_size",
+      "type": "number",
+      "label": "Number of people in household",
+      "confidence": 0.92,
+      "reasoning": "Household size is commonly collected in rural health surveys for demographic analysis"
+    },
+    {
+      "name": "water_source",
+      "type": "select",
+      "label": "Primary water source",
+      "options": [
+        {"value": "well", "label": "Well"},
+        {"value": "river", "label": "River/Stream"},
+        {"value": "piped", "label": "Piped water"}
+      ],
+      "confidence": 0.88,
+      "reasoning": "Water source is critical for health outcomes in rural areas"
+    }
+  ]
+}
+```
+
+#### Analyze CSV for Form Generation
+```http
+POST /api/forms/ai/analyze-csv
+Content-Type: multipart/form-data
+
+file: [CSV file]
+```
+
+#### Optimize Form
+```http
+POST /api/forms/{form_id}/optimize
+Content-Type: application/json
+
+{
+  "optimization_goals": ["completion_rate", "data_quality"],
+  "target_audience": "rural_communities"
+}
 ```
 
 ## Configuration
 
 ### Environment Variables
-```env
-FORM_MANAGEMENT_PORT=5001
-DATABASE_TYPE=postgresql
-DATABASE_URL=postgresql://user:password@localhost:5432/form_management
-SECRET_KEY=your-secret-key
-AI_ENABLED=true
-OPENAI_API_KEY=your-openai-key
+
+```bash
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=odk_mcp_forms
+DB_USER=forms_user
+DB_PASSWORD=secure_password
+
+# Redis Configuration
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=redis_password
+
+# Service Configuration
+SERVICE_PORT=5001
+SERVICE_HOST=0.0.0.0
+DEBUG=false
+LOG_LEVEL=INFO
+
+# AI Configuration
+OPENAI_API_KEY=your_openai_key
+AI_MODEL=gpt-4
+AI_TEMPERATURE=0.7
+MAX_SUGGESTIONS=5
+
+# File Storage
+UPLOAD_FOLDER=/var/uploads/forms
+MAX_FILE_SIZE=10MB
+ALLOWED_EXTENSIONS=csv,xlsx,json
+
+# Security
+JWT_SECRET_KEY=your_jwt_secret
+BCRYPT_LOG_ROUNDS=12
+RATE_LIMIT_PER_MINUTE=100
 ```
 
-### Database Configuration
-The service supports multiple database backends through the shared database configuration:
+### Database Setup
 
-```python
-from shared.database_config import get_database_manager
+```bash
+# Create database
+createdb odk_mcp_forms
 
-db_manager = get_database_manager('form_management')
+# Run migrations
+python src/migrations/create_tables.py
+
+# Seed initial data
+python src/migrations/seed_templates.py
 ```
-
-## Data Models
-
-### Form Model
-```python
-class Form(db.Model):
-    id = db.Column(db.String(36), primary_key=True)
-    title = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.Text)
-    version = db.Column(db.String(20), default='1.0')
-    status = db.Column(db.String(20), default='draft')
-    schema = db.Column(db.JSON, nullable=False)
-    settings = db.Column(db.JSON, default={})
-    created_by = db.Column(db.String(36), nullable=False)
-    organization_id = db.Column(db.String(36), nullable=False)
-    project_id = db.Column(db.String(36))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
-```
-
-### Field Types
-- **Text**: Single-line text input
-- **Textarea**: Multi-line text input
-- **Number**: Numeric input with validation
-- **Date**: Date picker
-- **Time**: Time picker
-- **DateTime**: Combined date and time
-- **Select**: Single selection dropdown
-- **MultiSelect**: Multiple selection
-- **Radio**: Radio button group
-- **Checkbox**: Checkbox group
-- **File**: File upload
-- **Image**: Image upload with preview
-- **Location**: GPS coordinates
-- **Barcode**: Barcode/QR code scanner
-- **Signature**: Digital signature capture
-
-## Usage Examples
-
-### Creating a Form
-```python
-import requests
-
-form_data = {
-    "title": "Customer Feedback Survey",
-    "description": "Collect customer feedback and satisfaction ratings",
-    "schema": {
-        "fields": [
-            {
-                "name": "customer_name",
-                "type": "text",
-                "label": "Customer Name",
-                "required": True
-            },
-            {
-                "name": "satisfaction",
-                "type": "select",
-                "label": "Satisfaction Rating",
-                "options": ["Very Satisfied", "Satisfied", "Neutral", "Dissatisfied", "Very Dissatisfied"],
-                "required": True
-            },
-            {
-                "name": "comments",
-                "type": "textarea",
-                "label": "Additional Comments",
-                "required": False
-            }
-        ]
-    },
-    "settings": {
-        "allow_multiple_submissions": True,
-        "require_authentication": False,
-        "notification_email": "admin@example.com"
-    }
-}
-
-response = requests.post(
-    "http://localhost:5001/forms",
-    json=form_data,
-    headers={"Authorization": "Bearer your-token"}
-)
-```
-
-### Getting AI Suggestions
-```python
-response = requests.post(
-    "http://localhost:5001/forms/form-id/suggestions",
-    json={
-        "context": "customer feedback survey for restaurant",
-        "existing_fields": ["customer_name", "satisfaction"]
-    },
-    headers={"Authorization": "Bearer your-token"}
-)
-
-suggestions = response.json()["suggestions"]
-```
-
-## Form Schema Structure
-
-### Basic Field Structure
-```json
-{
-  "name": "field_name",
-  "type": "field_type",
-  "label": "Field Label",
-  "required": true,
-  "validation": {
-    "min_length": 5,
-    "max_length": 100,
-    "pattern": "^[A-Za-z]+$"
-  },
-  "appearance": {
-    "placeholder": "Enter text here",
-    "help_text": "Additional guidance"
-  }
-}
-```
-
-### Conditional Logic
-```json
-{
-  "name": "follow_up_question",
-  "type": "text",
-  "label": "Please explain why",
-  "relevant": "${satisfaction} = 'Dissatisfied' or ${satisfaction} = 'Very Dissatisfied'"
-}
-```
-
-### Validation Rules
-```json
-{
-  "validation": {
-    "required": true,
-    "min_value": 0,
-    "max_value": 100,
-    "regex": "^\\d{3}-\\d{3}-\\d{4}$",
-    "custom": "function(value) { return value > 0; }"
-  }
-}
-```
-
-## Form Templates
-
-### Available Templates
-1. **Survey Template**: Basic survey with rating scales
-2. **Registration Template**: User registration form
-3. **Feedback Template**: Customer feedback collection
-4. **Assessment Template**: Educational assessment form
-5. **Inspection Template**: Quality inspection checklist
-6. **Interview Template**: Structured interview form
-7. **Application Template**: Job/program application form
-
-### Creating Custom Templates
-```python
-template_data = {
-    "name": "custom_survey",
-    "title": "Custom Survey Template",
-    "description": "Template for custom surveys",
-    "category": "survey",
-    "schema": {
-        "fields": [
-            # Template fields
-        ]
-    },
-    "variables": [
-        {
-            "name": "survey_title",
-            "type": "text",
-            "label": "Survey Title",
-            "default": "My Survey"
-        }
-    ]
-}
-```
-
-## Integration
-
-### With Data Collection Service
-The Form Management service integrates seamlessly with the Data Collection service for submission handling:
-
-```python
-# Form validation before submission
-form_schema = get_form_schema(form_id)
-validate_submission(submission_data, form_schema)
-```
-
-### With AI Modules
-Integration with AI modules for enhanced functionality:
-
-```python
-from ai_modules.form_recommendations import FormRecommender
-
-recommender = FormRecommender()
-suggestions = recommender.get_field_suggestions(form_context)
-```
-
-## Security
-
-### Authentication
-All endpoints require authentication via JWT tokens:
-
-```http
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
-
-### Authorization
-Role-based access control:
-- **Admin**: Full access to all forms
-- **Manager**: Access to organization forms
-- **User**: Access to own forms
-- **Viewer**: Read-only access
-
-### Data Protection
-- Input validation and sanitization
-- SQL injection prevention
-- XSS protection
-- Rate limiting
-
-## Monitoring and Logging
-
-### Health Check
-```http
-GET /health
-```
-
-### Metrics
-- Form creation rate
-- Validation error rate
-- API response times
-- Database connection status
-
-### Logging
-Comprehensive logging for:
-- Form operations
-- Validation errors
-- Authentication attempts
-- Performance metrics
 
 ## Development
 
-### Running Locally
+### Local Setup
+
 ```bash
-cd mcps/form_management
+# Clone repository
+git clone https://github.com/opporsuryansh94/enhanced-odk-mcp-system.git
+cd enhanced-odk-mcp-system/mcps/form_management
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# Run database migrations
+python src/migrations/create_tables.py
+
+# Start the service
 python src/main.py
 ```
 
 ### Testing
+
 ```bash
-python -m pytest tests/unit/test_form_management.py
+# Run all tests
+python -m pytest tests/ -v
+
+# Run with coverage
+python -m pytest tests/ --cov=src --cov-report=html
+
+# Run specific test categories
+python -m pytest tests/unit/ -v
+python -m pytest tests/integration/ -v
 ```
 
-### Database Migrations
+### API Testing
+
 ```bash
-python scripts/run_migrations.sh form_management
+# Test form creation
+curl -X POST http://localhost:5001/api/forms \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $JWT_TOKEN" \
+  -d '{
+    "title": "Test Form",
+    "fields": [
+      {
+        "name": "test_field",
+        "type": "text",
+        "label": "Test Field",
+        "required": true
+      }
+    ]
+  }'
+
+# Test form listing
+curl -X GET http://localhost:5001/api/forms \
+  -H "Authorization: Bearer $JWT_TOKEN"
 ```
+
+## Deployment
+
+### Docker Deployment
+
+```dockerfile
+# Dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY src/ ./src/
+COPY migrations/ ./migrations/
+
+EXPOSE 5000
+
+CMD ["python", "src/main.py"]
+```
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+
+services:
+  form-management:
+    build: .
+    ports:
+      - "5001:5000"
+    environment:
+      - DB_HOST=postgres
+      - REDIS_HOST=redis
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: odk_mcp_forms
+      POSTGRES_USER: forms_user
+      POSTGRES_PASSWORD: secure_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --requirepass redis_password
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+```
+
+### Production Considerations
+
+**Performance Optimization**
+- Enable database connection pooling
+- Implement Redis caching for frequently accessed forms
+- Use CDN for static assets and form templates
+- Enable gzip compression for API responses
+
+**Security Hardening**
+- Implement rate limiting per user/IP
+- Enable CORS with specific allowed origins
+- Use HTTPS in production with proper SSL certificates
+- Implement input validation and sanitization
+- Enable audit logging for all form operations
+
+**Monitoring and Logging**
+- Set up application performance monitoring (APM)
+- Configure structured logging with correlation IDs
+- Implement health checks and metrics endpoints
+- Set up alerts for error rates and response times
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Database Connection Error**
-   - Check DATABASE_URL configuration
-   - Verify database server is running
-   - Check network connectivity
+**Database Connection Errors**
+```bash
+# Check database connectivity
+pg_isready -h $DB_HOST -p $DB_PORT
 
-2. **Form Validation Errors**
-   - Verify form schema structure
-   - Check field type compatibility
-   - Validate JSON syntax
-
-3. **AI Features Not Working**
-   - Check OPENAI_API_KEY configuration
-   - Verify AI_ENABLED setting
-   - Check API quota limits
-
-### Debug Mode
-Enable debug mode for detailed error messages:
-```env
-FLASK_DEBUG=true
-LOG_LEVEL=DEBUG
+# Verify credentials
+psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME
 ```
 
-## Performance Optimization
+**Redis Connection Issues**
+```bash
+# Test Redis connectivity
+redis-cli -h $REDIS_HOST -p $REDIS_PORT ping
 
-### Database Optimization
-- Use database indexes for frequently queried fields
-- Implement connection pooling
-- Use read replicas for analytics queries
+# Check Redis authentication
+redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASSWORD ping
+```
 
-### Caching
-- Redis caching for frequently accessed forms
-- CDN for static assets
-- Browser caching for form schemas
+**AI Service Errors**
+- Verify OpenAI API key is valid and has sufficient credits
+- Check rate limits and quota usage
+- Ensure proper network connectivity to AI services
 
-### Scaling
-- Horizontal scaling with load balancers
-- Database sharding for large datasets
-- Microservice architecture for independent scaling
+### Performance Issues
+
+**Slow Form Loading**
+- Check database query performance with EXPLAIN ANALYZE
+- Verify proper indexing on frequently queried columns
+- Consider implementing form caching with Redis
+
+**High Memory Usage**
+- Monitor memory usage with system tools
+- Check for memory leaks in long-running processes
+- Optimize database queries to reduce memory footprint
+
+### Debugging
+
+**Enable Debug Mode**
+```bash
+export DEBUG=true
+export LOG_LEVEL=DEBUG
+python src/main.py
+```
+
+**Database Query Logging**
+```python
+# Add to configuration
+SQLALCHEMY_ECHO = True
+```
+
+**API Request Logging**
+```python
+# Enable request logging middleware
+app.config['LOG_REQUESTS'] = True
+```
 
 ## Contributing
 
-Please refer to the main project [Contributing Guidelines](../../CONTRIBUTING.md) for information on how to contribute to this service.
+We welcome contributions to the Form Management Service! Please see the main project [CONTRIBUTING.md](../../CONTRIBUTING.md) for guidelines.
+
+### Development Guidelines
+
+**Code Style**
+- Follow PEP 8 for Python code
+- Use type hints for all function parameters and return values
+- Write comprehensive docstrings for all public methods
+- Maintain test coverage above 90%
+
+**Testing Requirements**
+- Write unit tests for all business logic
+- Include integration tests for API endpoints
+- Add performance tests for critical operations
+- Test error handling and edge cases
+
+**Documentation**
+- Update API documentation for any endpoint changes
+- Include examples in docstrings
+- Update this README for any configuration changes
+- Add inline comments for complex business logic
 
 ## License
 
-This service is part of the Enhanced ODK MCP System and is licensed under the MIT License.
+This service is part of the Enhanced ODK MCP System and is licensed under the MIT License. See the main project [LICENSE](../../LICENSE) file for details.
 

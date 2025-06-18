@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            position: relative;
+        }
+        .investment-card {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 6px solid #f59e0b;
+        }
+        .partnership-highlight {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container p-16">
+        <!-- Header -->
+        <div class="mb-12">
+            <h1 class="text-5xl font-bold text-gray-800 mb-4">Investment Opportunity</h1>
+            <h2 class="text-2xl text-amber-600 font-medium">Partnership for Global Impact</h2>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="grid grid-cols-2 gap-12 h-96">
+            <!-- Left Column: Investment Details -->
+            <div class="space-y-6">
+                <div class="investment-card p-6 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-dollar-sign text-amber-600 text-2xl mr-4"></i>
+                        <h3 class="text-xl font-bold text-amber-800">Funding Requirements</h3>
+                    </div>
+                    <div class="text-3xl font-bold text-amber-700 mb-2">$5M Series A</div>
+                    <p class="text-amber-700 leading-relaxed">
+                        Scale platform globally, expand AI capabilities, and accelerate market penetration
+                    </p>
+                </div>
+                
+                <div class="investment-card p-6 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-chart-line text-amber-600 text-2xl mr-4"></i>
+                        <h3 class="text-xl font-bold text-amber-800">Use of Funds</h3>
+                    </div>
+                    <div class="space-y-2 text-amber-700">
+                        <div class="flex justify-between">
+                            <span>Product Development</span>
+                            <span class="font-bold">40%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Market Expansion</span>
+                            <span class="font-bold">30%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Team Growth</span>
+                            <span class="font-bold">20%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Operations</span>
+                            <span class="font-bold">10%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="investment-card p-6 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-handshake text-amber-600 text-2xl mr-4"></i>
+                        <h3 class="text-xl font-bold text-amber-800">Partnership Types</h3>
+                    </div>
+                    <div class="space-y-2 text-amber-700 text-sm">
+                        <div>• Strategic Investment Partners</div>
+                        <div>• Philanthropic Foundation Grants</div>
+                        <div>• CSR Strategic Partnerships</div>
+                        <div>• Impact Investment Funds</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Impact & Returns -->
+            <div>
+                <div class="bg-white rounded-2xl p-8 shadow-lg h-full">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Expected Impact & Returns</h3>
+                    
+                    <!-- Impact Metrics -->
+                    <div class="space-y-4 mb-6">
+                        <div class="partnership-highlight p-4 rounded-lg flex items-center">
+                            <i class="fas fa-globe text-2xl mr-4"></i>
+                            <div>
+                                <h4 class="font-bold">Global Reach</h4>
+                                <p class="text-sm opacity-90">10,000+ NGOs in 50+ countries by Year 3</p>
+                            </div>
+                        </div>
+                        
+                        <div class="partnership-highlight p-4 rounded-lg flex items-center">
+                            <i class="fas fa-users text-2xl mr-4"></i>
+                            <div>
+                                <h4 class="font-bold">Beneficiaries</h4>
+                                <p class="text-sm opacity-90">100M+ people impacted through better data</p>
+                            </div>
+                        </div>
+                        
+                        <div class="partnership-highlight p-4 rounded-lg flex items-center">
+                            <i class="fas fa-chart-bar text-2xl mr-4"></i>
+                            <div>
+                                <h4 class="font-bold">Efficiency Gains</h4>
+                                <p class="text-sm opacity-90">$2B+ saved in operational costs</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Financial Returns -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-bold text-gray-800 mb-3">Financial Projections</h4>
+                        <div class="grid grid-cols-2 gap-4 text-center">
+                            <div>
+                                <div class="text-2xl font-bold text-green-600">25x</div>
+                                <div class="text-xs text-gray-600">Expected ROI</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-green-600">$50M</div>
+                                <div class="text-xs text-gray-600">Year 5 Revenue</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Call to Action -->
+        <div class="mt-8 bg-gradient-to-r from-amber-600 to-orange-600 text-white p-6 rounded-xl">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-xl font-bold mb-2">Ready to Transform Social Impact?</h3>
+                    <p class="text-amber-100">Join us in revolutionizing how organizations collect, analyze, and act on data for social good</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-2xl font-bold">Contact Us</div>
+                    <div class="text-sm text-amber-200">partnerships@odk-mcp.com</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            position: relative;
+        }
+        .problem-card {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-left: 6px solid #dc2626;
+        }
+        .stat-highlight {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container p-16">
+        <!-- Header -->
+        <div class="mb-12">
+            <h1 class="text-5xl font-bold text-gray-800 mb-4">The Challenge</h1>
+            <h2 class="text-2xl text-blue-600 font-medium">Data Collection Crisis in Social Sector</h2>
+        </div>
+        
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-2 gap-12 h-96">
+            <!-- Left Column: Problems -->
+            <div class="space-y-6">
+                <div class="problem-card p-6 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-2xl mr-4"></i>
+                        <h3 class="text-xl font-bold text-red-800">Inefficient Data Collection</h3>
+                    </div>
+                    <p class="text-red-700 leading-relaxed">
+                        NGOs spend 40% of project time on manual data collection using paper forms and spreadsheets
+                    </p>
+                </div>
+                
+                <div class="problem-card p-6 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-chart-line-down text-red-600 text-2xl mr-4"></i>
+                        <h3 class="text-xl font-bold text-red-800">Poor Data Quality</h3>
+                    </div>
+                    <p class="text-red-700 leading-relaxed">
+                        Manual processes lead to 25% data error rates and delayed insights for decision-making
+                    </p>
+                </div>
+                
+                <div class="problem-card p-6 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-dollar-sign text-red-600 text-2xl mr-4"></i>
+                        <h3 class="text-xl font-bold text-red-800">High Operational Costs</h3>
+                    </div>
+                    <p class="text-red-700 leading-relaxed">
+                        Organizations waste $2.3M annually on inefficient data collection and analysis processes
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Right Column: Impact Visualization -->
+            <div class="flex flex-col justify-center">
+                <div class="bg-white rounded-2xl p-8 shadow-lg">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Current State Impact</h3>
+                    
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="stat-highlight p-4 rounded-lg text-center">
+                            <div class="text-3xl font-bold mb-2">78%</div>
+                            <div class="text-sm opacity-90">Projects Delayed</div>
+                        </div>
+                        <div class="stat-highlight p-4 rounded-lg text-center">
+                            <div class="text-3xl font-bold mb-2">$2.3M</div>
+                            <div class="text-sm opacity-90">Annual Waste</div>
+                        </div>
+                        <div class="stat-highlight p-4 rounded-lg text-center">
+                            <div class="text-3xl font-bold mb-2">25%</div>
+                            <div class="text-sm opacity-90">Error Rate</div>
+                        </div>
+                        <div class="stat-highlight p-4 rounded-lg text-center">
+                            <div class="text-3xl font-bold mb-2">40%</div>
+                            <div class="text-sm opacity-90">Time Wasted</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Visual Impact -->
+                    <div class="text-center">
+                        <img src="/home/ubuntu/enterprise-system/assets/social_impact_measurement.jpg" 
+                             alt="Social Impact Measurement" 
+                             class="w-full h-32 object-cover rounded-lg">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Call-out -->
+        <div class="mt-8 bg-gradient-to-r from-blue-600 to-green-600 text-white p-6 rounded-xl">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-xl font-bold mb-2">The Opportunity</h3>
+                    <p class="text-blue-100">Transform data collection with AI-powered, offline-first technology</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl font-bold">$443B</div>
+                    <div class="text-sm text-blue-200">Market Opportunity</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
