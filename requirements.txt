@@ -50,3 +50,6 @@ pillow==10.0.1
 python-socketio==5.10.0
 eventlet==0.33.3
 
+
+faker==37.4.0
+
